@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản trị — 9.27</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-mark">✦</span><span><strong>9.27</strong><small>CLASS HUB</small></span></a>
+  <nav class="nav">
+    <a href="index.html">Trang chủ</a><a href="baitap.html">Bài tập</a><a href="chongoi.html">Chỗ ngồi</a>
+    <a href="danhsach.html">DSCN</a><a href="trucnhat.html">Trực nhật</a><a class="active" href="admingay.html">Admin</a>
+  </nav>
+</header>
+
+<main class="page container">
+  <div id="loginBox" class="admin-login">
+    <span class="eyebrow">QUẢN TRỊ</span>
+    <h1>Admin 9.27</h1>
+    <p>Đăng nhập để cập nhật nội dung lớp.</p>
+    <input id="adminPassword" class="admin-input" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+    <button class="btn btn-primary" onclick="adminLogin()">Đăng nhập</button>
+    <small id="adminLoginError" class="admin-note" style="color:#c00"></small>
+  </div>
+
+  <div id="adminPanel" class="admin-panel" style="display:none">
+    <div class="page-title">
+      <div><span class="eyebrow">BẢNG ĐIỀU KHIỂN</span><h1>Quản lý lớp</h1><p>Quản lý dữ liệu lớp và lưu trực tiếp lên hệ thống online.</p></div>
+      <button class="btn btn-ghost" onclick="adminLogout()">Đăng xuất</button>
+    </div>
+
+    <div class="admin-grid">
+      <section class="admin-card">
+        <span class="eyebrow">BÀI TẬP</span><h2>Thêm bài tập theo ngày</h2>
+        <input id="hwDate" class="admin-input" type="date">
+        <input id="hwSubject" class="admin-input" placeholder="Môn học">
+        <textarea id="hwText" class="admin-textarea" placeholder="Nội dung bài tập"></textarea>
+        <button class="btn btn-primary" onclick="addHomework()">+ Thêm</button>
+        <div id="adminHomework" class="admin-items"></div>
+      </section>
+
+      <section class="admin-card">
+        <span class="eyebrow">VI PHẠM</span><h2>Thêm vi phạm</h2>
+        <select id="viStudent" class="admin-input"></select>
+        <input id="viDate" class="admin-input" type="date">
+        <input id="viWeek" class="admin-input" placeholder="Ví dụ: Tuần 2">
+        <input id="viText" class="admin-input" placeholder="Nội dung vi phạm">
+        <input id="viPenalty" class="admin-input" type="number" step="0.1" placeholder="Điểm trừ, ví dụ -2">
+        <button class="btn btn-primary" onclick="addViolation()">+ Thêm vi phạm</button>
+        <div id="adminViolations" class="admin-items"></div>
+      </section>
+
+      <section class="admin-card wide">
+        <span class="eyebrow">ĐIỂM SỐ</span><h2>Nhập điểm</h2>
+        <select id="gradeStudent" class="admin-input"></select>
+        <div class="admin-inline">
+          <input id="gradeSubject" class="admin-input" placeholder="Môn">
+          <input id="gradeValue" class="admin-input" placeholder="Điểm" type="number" min="0" max="10" step="0.1">
+        </div>
+        <button class="btn btn-primary" onclick="addGrade()">+ Thêm điểm</button>
+        <div id="adminGrades" class="admin-items"></div>
+      </section>
+
+      <section class="admin-card wide">
+        <span class="eyebrow">TRỰC NHẬT</span><h2>Trực nhật theo tuần</h2>
+        <div class="admin-inline">
+          <input id="dutyWeekStart" class="admin-input" type="date">
+          <input id="dutyGroup" class="admin-input" placeholder="Tổ 1 / Tổ 2 / ...">
+        </div>
+        <textarea id="dutyMembers" class="admin-textarea" placeholder="Danh sách thành viên"></textarea>
+        <button class="btn btn-primary" onclick="addDuty()">+ Lưu lịch tuần</button>
+        <div id="adminDuty" class="admin-items"></div>
+      </section>
+    </div>
+
+    <section class="admin-card wide seat-admin-card">
+      <span class="eyebrow">CHỖ NGỒI</span><h2>Sắp xếp sơ đồ chỗ ngồi</h2>
+      <p class="admin-seat-help">Chọn học sinh cho từng bàn. Bỏ chọn để để trống. Sau khi lưu, sơ đồ mới sẽ hiển thị cho mọi người trên website.</p>
+      <div id="seatEditor"></div>
+      <button id="saveSeatBtn" class="btn btn-primary" onclick="saveSeatPlan()">Lưu sơ đồ chỗ ngồi</button>
+      <p id="seatSyncStatus" class="admin-note">Sơ đồ hiện tại đang lấy từ dữ liệu của website.</p>
+    </section>
+
+    <div class="admin-danger">
+      <strong>☁️ Dữ liệu online</strong>
+      <p id="syncStatus">Điểm, vi phạm, bài tập và lịch trực đều được lưu trên Supabase. Bài tập hiển thị 14 ngày gần nhất; mỗi tuần chỉ có 1 tổ trực.</p>
+      <button id="migrateBtn" class="btn btn-primary" onclick="migrateLegacyData()">Đồng bộ dữ liệu cũ lên Supabase</button>
+      <button class="btn btn-ghost" onclick="resetClassData()">Khôi phục dữ liệu cũ trên thiết bị</button>
+    </div>
+  </div>
+</main>
+<footer>9.27 CLASS HUB · Admin</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="data.js"></script>
+<script src="script.js"></script>
+<script>initAdmin();</script>
+</body>
+</html>
+
